@@ -1,0 +1,2 @@
+#ignores a certain file with a certain extension 
+*.csv
