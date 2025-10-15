@@ -487,6 +487,95 @@ covid_data &lt;- covid_data |&gt;
 #Patients by Age Group: Middle-aged (19–35) and older (51+) groups were most represented, indicating higher healthcare interaction in these populations.</code></pre>
 </div>
 </div>
+<div id="task-2-filter-those-patients-in-the-dataset-that-have-contracted-covid-19-or-suspected-covid-19" class="section level2">
+<h2>Task 2 Filter those patients in the dataset that have contracted
+COVID-19 or Suspected COVID-19</h2>
+<p>what are the top 5 most common conditions other than COVID-19
+(symptoms) related to the patients? Do the conditions differ between
+genders? Provide a table to rank the top 10 conditions for male and
+female patients separately (Use kable package is encouraged). Elaborate
+on the findings.</p>
+<pre class="r"><code>#Detect relevant column names dynamically 
+id_col &lt;- names(patient_data)[grepl(&quot;^Id$&quot;, names(patient_data), ignore.case = TRUE)]
+patient_col &lt;- names(conditions_data)[grepl(&quot;^patient$&quot;, names(conditions_data), ignore.case = TRUE)]
+desc_col &lt;- names(conditions_data)[grepl(&quot;desc&quot;, names(conditions_data), ignore.case = TRUE)]
+
+
+# Filter all conditions for COVID patients 
+covid_conditions &lt;- conditions_data |&gt;
+  rename(PATIENT = all_of(patient_col)) |&gt;
+  semi_join(covid_patients, by = &quot;PATIENT&quot;) |&gt;
+  filter(!grepl(&quot;COVID|SARS|coronavirus&quot;, .data[[desc_col]], ignore.case = TRUE))
+
+# Join with gender information 
+covid_conditions_gender &lt;- covid_conditions |&gt;
+  left_join(patient_data |&gt; rename(Id = all_of(id_col)), by = c(&quot;PATIENT&quot; = &quot;Id&quot;))
+
+# Count and rank conditions by gender 
+condition_rank &lt;- covid_conditions_gender |&gt;
+  group_by(GENDER, .data[[desc_col]]) |&gt;
+  summarise(count = n(), .groups = &quot;drop&quot;) |&gt;
+  arrange(GENDER, desc(count))
+
+# Create top 10 conditions per gender 
+top_conditions &lt;- condition_rank |&gt;
+  group_by(GENDER) |&gt;
+  slice_max(order_by = count, n = 10) |&gt;
+  mutate(rank = row_number()) |&gt;
+  select(GENDER, rank, condition = all_of(desc_col), count)</code></pre>
+<pre class="r"><code># Display tables using kable 
+library(knitr)
+
+# Display tables using kable
+top_conditions |&gt;
+  group_split(GENDER) |&gt;
+  lapply(\(df) {
+    cat(&quot;\n### Top 10 Conditions for Gender:&quot;, unique(df$GENDER), &quot;\n&quot;)
+    print(kable(df, caption = paste(&quot;Top 10 Conditions for&quot;, unique(df$GENDER), &quot;PATIENTS&quot;)))   })</code></pre>
+<pre><code>## Warning: ... is ignored in group_split(&lt;grouped_df&gt;), please use group_by(..., .add =
+## TRUE) %&gt;% group_split()</code></pre>
+<pre><code>## 
+## ### Top 10 Conditions for Gender: F 
+## 
+## 
+## Table: Top 10 Conditions for F PATIENTS
+## 
+## |GENDER | rank|condition                               | count|
+## |:------|----:|:---------------------------------------|-----:|
+## |F      |    1|Fever (finding)                         |  3202|
+## |F      |    2|Cough (finding)                         |  2472|
+## |F      |    3|Loss of taste (finding)                 |  1846|
+## |F      |    4|Body mass index 30+ - obesity (finding) |  1420|
+## |F      |    5|Fatigue (finding)                       |  1373|
+## |F      |    6|Miscarriage in first trimester          |  1199|
+## |F      |    7|Sputum finding (finding)                |  1190|
+## |F      |    8|Prediabetes                             |  1031|
+## |F      |    9|Hypertension                            |   882|
+## |F      |   10|Normal pregnancy                        |   827|
+## 
+## ### Top 10 Conditions for Gender: M 
+## 
+## 
+## Table: Top 10 Conditions for M PATIENTS
+## 
+## |GENDER | rank|condition                               | count|
+## |:------|----:|:---------------------------------------|-----:|
+## |M      |    1|Fever (finding)                         |  2886|
+## |M      |    2|Cough (finding)                         |  2202|
+## |M      |    3|Loss of taste (finding)                 |  1725|
+## |M      |    4|Fatigue (finding)                       |  1271|
+## |M      |    5|Body mass index 30+ - obesity (finding) |  1188|
+## |M      |    6|Sputum finding (finding)                |  1070|
+## |M      |    7|Anemia (disorder)                       |  1049|
+## |M      |    8|Prediabetes                             |   991|
+## |M      |    9|Hypertension                            |   823|
+## |M      |   10|Chronic sinusitis (disorder)            |   664|</code></pre>
+<pre><code>## [[1]]
+## NULL
+## 
+## [[2]]
+## NULL</code></pre>
+</div>
 
 
 

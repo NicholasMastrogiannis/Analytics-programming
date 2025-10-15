@@ -123,3 +123,54 @@ ggplot(patient_data, aes(x = age_group)) +
 #Patients by Age Group: Middle-aged (19–35) and older (51+) groups were most represented, indicating higher healthcare interaction in these populations.
 ```
 
+## Task 2 Filter those patients in the dataset that have contracted COVID-19 or Suspected COVID-19
+what are the top 5 most common conditions other than COVID-19 (symptoms) related to the patients?
+Do the conditions differ between genders? Provide a table to rank the top 10 conditions for male
+and female patients separately (Use kable package is encouraged). Elaborate on the findings.
+
+```{r}
+
+ 
+#Detect relevant column names dynamically 
+id_col <- names(patient_data)[grepl("^Id$", names(patient_data), ignore.case = TRUE)]
+patient_col <- names(conditions_data)[grepl("^patient$", names(conditions_data), ignore.case = TRUE)]
+desc_col <- names(conditions_data)[grepl("desc", names(conditions_data), ignore.case = TRUE)]
+
+
+# Filter all conditions for COVID patients 
+covid_conditions <- conditions_data |>
+  rename(PATIENT = all_of(patient_col)) |>
+  semi_join(covid_patients, by = "PATIENT") |>
+  filter(!grepl("COVID|SARS|coronavirus", .data[[desc_col]], ignore.case = TRUE))
+
+# Join with gender information 
+covid_conditions_gender <- covid_conditions |>
+  left_join(patient_data |> rename(Id = all_of(id_col)), by = c("PATIENT" = "Id"))
+
+# Count and rank conditions by gender 
+condition_rank <- covid_conditions_gender |>
+  group_by(GENDER, .data[[desc_col]]) |>
+  summarise(count = n(), .groups = "drop") |>
+  arrange(GENDER, desc(count))
+
+# Create top 10 conditions per gender 
+top_conditions <- condition_rank |>
+  group_by(GENDER) |>
+  slice_max(order_by = count, n = 10) |>
+  mutate(rank = row_number()) |>
+  select(GENDER, rank, condition = all_of(desc_col), count)
+
+```
+
+```{r}
+# Display tables using kable 
+library(knitr)
+
+# Display tables using kable
+top_conditions |>
+  group_split(GENDER) |>
+  lapply(\(df) {
+    cat("\n### Top 10 Conditions for Gender:", unique(df$GENDER), "\n")
+    print(kable(df, caption = paste("Top 10 Conditions for", unique(df$GENDER), "PATIENTS")))   })
+```
+
