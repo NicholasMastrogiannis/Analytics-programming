@@ -34,3 +34,71 @@ encounters_data <- read.csv("encountersUG.csv")
 conditions_data <- read.csv("conditionsUG.csv")
 ```
 
+## Task 1 Write the code to analyse the distribution of COVID patients (confirmed or suspected) across counties And code to investigate the distribution of patients across age groups (e.g., 0-18,
+19-35, 36-50, 51+). Visualise both the findings using the histogram. Explain your findings.
+
+```{r}
+#load libraries
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(readr)
+
+```
+
+```{r}
+#Identify COVID patients based on diagnosis description
+covid_patients <- conditions_data |>
+  filter(grepl("COVID|SARS|coronavirus", DESCRIPTION, ignore.case = TRUE)) |>
+  distinct(PATIENT)
+
+# Join with patient demographic data to figure out Id
+covid_data <- patient_data |>
+  inner_join(covid_patients, by = c("Id" = "PATIENT"))
+
+#Calculate current age for each patient
+patient_data <- patient_data |>
+  mutate(
+    BIRTHDATE = as.Date(BIRTHDATE),
+    age = as.numeric(floor((Sys.Date() - BIRTHDATE) / 365.25)),
+    age_group = case_when(
+      age <= 18 ~ "0-18",
+      age <= 35 ~ "19-35",
+      age <= 50 ~ "36-50",
+      age > 50  ~ "51+",
+      TRUE ~ NA_character_
+    )
+  )
+# Merging age groups with COVID data
+covid_data <- covid_data |>
+  left_join(select(patient_data, Id, age_group), by = "Id")
+
+```
+
+### Visualisation 1: COVID distribution across counties
+
+```{r}
+ggplot(covid_data, aes(x = COUNTY)) +
+  geom_bar(fill = "steelblue") +
+  labs(
+    title = "Distribution of COVID Patients Across Counties",
+    x = "County",
+    y = "Number of Patients"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+### Visualisation 2: Patient distribution across age groups
+
+```{r}
+ggplot(patient_data, aes(x = age_group)) +
+  geom_bar(fill = "darkorange") +
+  labs(
+    title = "Distribution of Patients Across Age Groups",
+    x = "Age Group",
+    y = "Number of Patients"
+  ) +
+  theme_minimal()
+```
+
