@@ -1,2 +1,3 @@
-#ignores a certain file with a certain extension 
-*.csv
+# what ever is written in here is ignores by git repo as long as there is no hash behind it
+# ignores a certain file with a certain extension 
+* .csv
