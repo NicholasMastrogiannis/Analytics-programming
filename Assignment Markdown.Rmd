@@ -174,3 +174,25 @@ top_conditions |>
     print(kable(df, caption = paste("Top 10 Conditions for", unique(df$GENDER), "PATIENTS")))   })
 ```
 
+## Understanding the task
+
+```{r}
+# The task involves identifying patients diagnosed with confirmed or suspected COVID-19 and analyzing their most common additional (non-COVID) conditions. It also examines whether these conditions differ between male and female patients and requires presenting the top 10 ranked conditions for each gender using kable.
+```
+
+## Rationale
+```{r}
+#Used tidyverse for efficient data filtering and joining.
+#Extracted COVID-positive patients from conditions_data using keywords such as COVID, SARS, or coronavirus.
+#Excluded COVID-related entries to focus on other conditions.
+#Joined with patient_data to access gender information.
+#Summarized and ranked conditions by gender and displayed results using kable() for clear presentation.
+```
+
+## Findings and Interpretation
+
+```{r}
+#Common non-COVID conditions included respiratory symptoms (e.g., pneumonia, fever, cough) and chronic illnesses such as hypertension and diabetes.
+#Gender differences emerged — males showed more cardiovascular and metabolic conditions, while females displayed slightly higher fatigue and immune-related issues.
+```
+
