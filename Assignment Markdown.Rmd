@@ -102,3 +102,24 @@ ggplot(patient_data, aes(x = age_group)) +
   theme_minimal()
 ```
 
+### Understanding the task
+```{r}
+#The task requires identifying COVID-19–related patients from the health datasets and analyzing how they are distributed across counties and age groups (0–18, 19–35, 36–50, 51+). It also asks for correct data wrangling, clean R code, and interpretation supported by visualizations.
+```
+
+### Rationale
+```{r}
+#Used tidyverse packages (dplyr, ggplot2, lubridate) for consistent and readable analysis.
+#Filtered conditions_data for keywords like COVID, SARS, or coronavirus.
+#Joined with patient_data to access demographics.
+#Calculated age and grouped into categories for population analysis.
+#Used histograms for clear visual comparison.
+```
+
+### Findings and interpretation
+
+```{r}
+#COVID by County: Certain counties had noticeably higher case counts, likely due to population size or access to testing facilities.
+#Patients by Age Group: Middle-aged (19–35) and older (51+) groups were most represented, indicating higher healthcare interaction in these populations.
+```
+
