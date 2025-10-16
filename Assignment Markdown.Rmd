@@ -257,3 +257,8 @@ ggplot(hospitalization_summary, aes(x = ENCOUNTERCLASS, y = rate, fill = GENDER)
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+### Trend Explanation
+
+- When looking at age and gender as possible factors, a few clear patterns stand out. Older patients, especially those over 50, tended to have more inpatient and emergency visits. This makes sense because older people are generally more at risk of serious illness and are more likely to need hospital care. On the other hand, younger groups (under 35) showed higher numbers in ambulatory or urgent care visits, which often involve milder symptoms or check-ups rather than hospital stays.
+- There was also a noticeable difference between men and women. Male patients appeared more often in the inpatient and emergency categories, while female patients were seen slightly more in outpatient or urgent care cases. This could suggest differences in how severe the illness becomes or how people of different genders use healthcare services.
+
