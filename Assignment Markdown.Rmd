@@ -208,5 +208,10 @@ id_col <- names(patient_data)[grepl("^Id$", names(patient_data), ignore.case = T
 patient_col <- names(conditions_data)[grepl("^PATIENT$", names(conditions_data), ignore.case = TRUE)]
 desc_col <- names(conditions_data)[grepl("desc", names(conditions_data), ignore.case = TRUE)]
 
+# Identify COVID or suspected COVID patients
+covid_patients <- conditions_data |>
+  filter(grepl("COVID|SARS|coronavirus", .data[[desc_col]], ignore.case = TRUE)) |>
+  distinct(.data[[patient_col]]) |>
+  rename(PATIENT = all_of(patient_col))
 ```
 

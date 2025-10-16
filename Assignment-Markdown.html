@@ -608,7 +608,13 @@ explain if there is a trend that explains the variation.</h3>
 <pre class="r"><code>#Detect column names dynamically 
 id_col &lt;- names(patient_data)[grepl(&quot;^Id$&quot;, names(patient_data), ignore.case = TRUE)]
 patient_col &lt;- names(conditions_data)[grepl(&quot;^PATIENT$&quot;, names(conditions_data), ignore.case = TRUE)]
-desc_col &lt;- names(conditions_data)[grepl(&quot;desc&quot;, names(conditions_data), ignore.case = TRUE)]</code></pre>
+desc_col &lt;- names(conditions_data)[grepl(&quot;desc&quot;, names(conditions_data), ignore.case = TRUE)]
+
+# Identify COVID or suspected COVID patients
+covid_patients &lt;- conditions_data |&gt;
+  filter(grepl(&quot;COVID|SARS|coronavirus&quot;, .data[[desc_col]], ignore.case = TRUE)) |&gt;
+  distinct(.data[[patient_col]]) |&gt;
+  rename(PATIENT = all_of(patient_col))</code></pre>
 </div>
 </div>
 
