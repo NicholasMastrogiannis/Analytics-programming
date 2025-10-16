@@ -177,22 +177,27 @@ top_conditions |>
 ## Understanding the task
 
 ```{r}
-# The task involves identifying patients diagnosed with confirmed or suspected COVID-19 and analyzing their most common additional (non-COVID) conditions. It also examines whether these conditions differ between male and female patients and requires presenting the top 10 ranked conditions for each gender using kable.
+#This task focuses on patients who have been diagnosed with confirmed or suspected COVID-19.
+#The goal is to identify the most common additional conditions (other than COVID-19 itself) that these patients experienced.
+#It also explores whether these conditions differ between male and female patients.
+#Finally, the task requires presenting the top 10 most frequent conditions for each gender using the kable() function for clear tabular output.
 ```
 
 ## Rationale
 ```{r}
-#Used tidyverse for efficient data filtering and joining.
-#Extracted COVID-positive patients from conditions_data using keywords such as COVID, SARS, or coronavirus.
-#Excluded COVID-related entries to focus on other conditions.
-#Joined with patient_data to access gender information.
-#Summarized and ranked conditions by gender and displayed results using kable() for clear presentation.
+#The tidyverse packages were used for efficient and readable data manipulation.
+#COVID-19 patients were identified in the conditions_data using keywords such as “COVID”, “SARS”, and “coronavirus”.
+#All COVID-related diagnoses were excluded so only non-COVID conditions were analyzed.
+#The data were then linked with patient_data to include gender information.
+#Conditions were grouped, counted, and ranked by gender, and the top 10 results for both males and females were displayed using kable() for a clean and professional presentation.
 ```
 
 ## Findings and Interpretation
 
 ```{r}
-#Common non-COVID conditions included respiratory symptoms (e.g., pneumonia, fever, cough) and chronic illnesses such as hypertension and diabetes.
-#Gender differences emerged — males showed more cardiovascular and metabolic conditions, while females displayed slightly higher fatigue and immune-related issues.
+#The analysis revealed that the most common non-COVID conditions among affected patients included respiratory issues such as pneumonia, fever, and cough, as well as chronic conditions like hypertension and diabetes.
+#Gender-based differences were also observed — male patients tended to have more cardiovascular and metabolic conditions,
+#while female patients showed slightly higher rates of fatigue and immune-related symptoms.
+#These findings suggest potential gender-based health variations in patients who contracted or were suspected of having COVID-19.
 ```
 
