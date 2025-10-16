@@ -243,5 +243,17 @@ hospitalization_summary <- covid_encounters |>
   group_by(GENDER, age_group) |>
   mutate(rate = count / sum(count)) |>
   ungroup()
+
+# Visualize hospitalization patterns
+ggplot(hospitalization_summary, aes(x = ENCOUNTERCLASS, y = rate, fill = GENDER)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~ age_group) +
+  labs(
+    title = "Hospitalization Rate by Encounter Type, Age Group, and GENDER",
+    x = "Encounter Type",
+    y = "Proportion of Encounters"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
