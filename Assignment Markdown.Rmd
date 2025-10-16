@@ -213,5 +213,26 @@ covid_patients <- conditions_data |>
   filter(grepl("COVID|SARS|coronavirus", .data[[desc_col]], ignore.case = TRUE)) |>
   distinct(.data[[patient_col]]) |>
   rename(PATIENT = all_of(patient_col))
+
+# Join with encounters and patient demographics
+covid_encounters <- encounters_data |>
+  rename(PATIENT = all_of(patient_col)) |>
+  semi_join(covid_patients, by = "PATIENT") |>
+  left_join(patient_data |> rename(ID = all_of(id_col)), by = c("PATIENT" = "ID"))
+
+# Calculate patient age
+covid_encounters <- covid_encounters |>
+  mutate(
+    BIRTHDATE = as.Date(BIRTHDATE),
+    age = as.numeric(floor((Sys.Date() - BIRTHDATE) / 365.25)),
+    age_group = case_when(
+      age <= 18 ~ "0-18",
+      age <= 35 ~ "19-35",
+      age <= 50 ~ "36-50",
+      age > 50  ~ "51+",
+      TRUE ~ NA_character_
+    )
+  )
+
 ```
 

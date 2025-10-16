@@ -614,7 +614,27 @@ desc_col &lt;- names(conditions_data)[grepl(&quot;desc&quot;, names(conditions_d
 covid_patients &lt;- conditions_data |&gt;
   filter(grepl(&quot;COVID|SARS|coronavirus&quot;, .data[[desc_col]], ignore.case = TRUE)) |&gt;
   distinct(.data[[patient_col]]) |&gt;
-  rename(PATIENT = all_of(patient_col))</code></pre>
+  rename(PATIENT = all_of(patient_col))
+
+# Join with encounters and patient demographics
+covid_encounters &lt;- encounters_data |&gt;
+  rename(PATIENT = all_of(patient_col)) |&gt;
+  semi_join(covid_patients, by = &quot;PATIENT&quot;) |&gt;
+  left_join(patient_data |&gt; rename(ID = all_of(id_col)), by = c(&quot;PATIENT&quot; = &quot;ID&quot;))
+
+# Calculate patient age
+covid_encounters &lt;- covid_encounters |&gt;
+  mutate(
+    BIRTHDATE = as.Date(BIRTHDATE),
+    age = as.numeric(floor((Sys.Date() - BIRTHDATE) / 365.25)),
+    age_group = case_when(
+      age &lt;= 18 ~ &quot;0-18&quot;,
+      age &lt;= 35 ~ &quot;19-35&quot;,
+      age &lt;= 50 ~ &quot;36-50&quot;,
+      age &gt; 50  ~ &quot;51+&quot;,
+      TRUE ~ NA_character_
+    )
+  )</code></pre>
 </div>
 </div>
 
