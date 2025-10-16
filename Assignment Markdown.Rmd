@@ -75,7 +75,7 @@ covid_data <- covid_data |>
 
 ```
 
-### Visualisation 1: COVID distribution across counties
+### Visualisation 1: COVID distribution across counties.
 
 ```{r}
 ggplot(covid_data, aes(x = COUNTY)) +
@@ -89,7 +89,7 @@ ggplot(covid_data, aes(x = COUNTY)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-### Visualisation 2: Patient distribution across age groups
+### Visualisation 2: Patient distribution across age groups.
 
 ```{r}
 ggplot(patient_data, aes(x = age_group)) +
