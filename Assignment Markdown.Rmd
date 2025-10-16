@@ -233,6 +233,15 @@ covid_encounters <- covid_encounters |>
       TRUE ~ NA_character_
     )
   )
+```
 
+```{r}
+#Summarize hospitalization rates by gender and age group 
+hospitalization_summary <- covid_encounters |>
+  group_by(GENDER, age_group, ENCOUNTERCLASS) |>
+  summarise(count = n(), .groups = "drop") |>
+  group_by(GENDER, age_group) |>
+  mutate(rate = count / sum(count)) |>
+  ungroup()
 ```
 
