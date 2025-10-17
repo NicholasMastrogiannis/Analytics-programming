@@ -262,3 +262,42 @@ ggplot(hospitalization_summary, aes(x = ENCOUNTERCLASS, y = rate, fill = GENDER)
 - When looking at age and gender as possible factors, a few clear patterns stand out. Older patients, especially those over 50, tended to have more inpatient and emergency visits. This makes sense because older people are generally more at risk of serious illness and are more likely to need hospital care. On the other hand, younger groups (under 35) showed higher numbers in ambulatory or urgent care visits, which often involve milder symptoms or check-ups rather than hospital stays.
 - There was also a noticeable difference between men and women. Male patients appeared more often in the inpatient and emergency categories, while female patients were seen slightly more in outpatient or urgent care cases. This could suggest differences in how severe the illness becomes or how people of different genders use healthcare services.
 
+## Task 4 Write the code to investigate the characteristics of patients (confirmed or suspected) who recover from COVID-19 compared to those who don’t. 
+### Consider factors such as demographics (age, gender, zip code), symptoms, and timeline of diagnosis and recovery. Analyse how these factors impact the recovery outcome.
+
+```{r}
+# Identify COVID-related conditions 
+covid_conditions <- conditions_data %>%
+  filter(grepl("COVID|SARS|coronavirus", DESCRIPTION, ignore.case = TRUE))
+
+# Determine recovery status 
+# Patients recovered if 'Stop' date recorded and no death date
+covid_status <- covid_conditions %>%
+  group_by(PATIENT) %>%
+  summarise(
+    covid_start = min(as.Date(START)),
+    covid_stop = min(as.Date(STOP), na.rm = TRUE),
+    recovered = ifelse(!is.na(covid_stop), 1, 0) )
+
+
+# Merge with patient demographics
+covid_data <- covid_status %>%
+  inner_join(patient_data, by = c("PATIENT" = "Id")) %>%
+  mutate(
+    age = as.numeric(floor((Sys.Date() - as.Date(BIRTHDATE)) / 365.25)),
+    time_to_recovery = as.numeric(as.Date(covid_stop) - as.Date(covid_start))
+  )
+
+# Summarise characteristics
+covid_summary <- covid_data %>%
+  group_by(recovered) %>%
+  summarise(
+    avg_age = mean(age, na.rm = TRUE),
+    male_percent = mean(GENDER == "M", na.rm = TRUE) * 100,
+    avg_time_to_recovery = mean(time_to_recovery, na.rm = TRUE)
+  )
+
+print(covid_summary)
+
+```
+
